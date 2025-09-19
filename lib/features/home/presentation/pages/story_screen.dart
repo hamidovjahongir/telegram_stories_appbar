@@ -91,6 +91,12 @@ class _StoryScreenState extends State<StoryScreen>
         setState(() {
           _currentUserIndex++;
           _currentStoryIndex = 0;
+          // page viuve keyingi sahifagat otadi
+          _pageController.animateToPage(
+            _currentUserIndex,
+            duration: Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+          );
           _startTimer();
         });
       } else {
@@ -101,26 +107,33 @@ class _StoryScreenState extends State<StoryScreen>
     }
   }
 
+  
   void _goToPreviousStory() {
-    if (_currentStoryIndex > 0) {
-      setState(() {
-        _currentStoryIndex--;
-        _startTimer();
-      });
-    } else if (_currentUserIndex > 0) {
-      setState(() {
-        _currentUserIndex--;
-        _currentStoryIndex = currentUser.stories!.length - 1;
-        _startTimer();
-      });
-    }
+  if (_currentStoryIndex > 0) {
+    setState(() {
+      _currentStoryIndex--;
+      _startTimer();
+    });
+  } else if (_currentUserIndex > 0) {
+    _currentUserIndex--;
+    _currentStoryIndex = widget.users[_currentUserIndex].stories!.length - 1;
+    _pageController.animateToPage(
+      _currentUserIndex,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+    _startTimer();
   }
+}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       body: GestureDetector(
+        onPanUpdate: (details) {
+          Navigator.pop(context);
+        },
         onPanDown: (_) {
           _pauseTimer();
         },
